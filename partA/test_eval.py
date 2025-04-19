@@ -5,9 +5,9 @@ from partA.model import CustomCNN, data_loader
 import torchvision.datasets as datasets
 import numpy as np
 
-train_loader, val_loader, test_loader = data_loader(data_dir='data', batch_size=32, dataAugmentation=True)
+train_loader, val_loader, test_loader = data_loader(data_dir='data', batch_size=32, dataAugmentation=True) # Load the data loaders
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu") # Use GPU if available
 
 model = CustomCNN(
                     filter_size=3,
@@ -18,7 +18,7 @@ model = CustomCNN(
                     dropout=0.4,
                     batch_norm=True,
                     n_blocks=5,
-                    activation_function="GeLU").to(device)
+                    activation_function="GeLU").to(device) # Initialize the model with best parameters
 
 # Check if the best model exists
 if os.path.exists("best_model.pth"):
@@ -36,7 +36,7 @@ else:
     torch.save(model.state_dict(), "best_model.pth")
 
 model.load_state_dict(torch.load("best_model.pth"))
-# ---- Get best epoch based on test accuracy ----
+# Get best epoch based on test accuracy 
 predictions,true_labels = model.predict(test_loader, device)
 best_accuracy = (predictions == true_labels).sum().item() / len(true_labels)
 
@@ -44,10 +44,10 @@ dataset = datasets.ImageFolder(root=os.path.join('data', 'val'))
 class_to_name = {i: name.split('/')[-1] for i, name in enumerate(dataset.classes)}
                                
 
-# ---- Initialize Weights & Biases ----
+# Initialize Weights & Biases 
 wandb.init(project="iNaturalist-CNN", name="best_model_test_eval")
 
-# ---- Get 30 sample predictions ----
+# Get 30 sample predictions 
 model.eval()
 images, labels, preds = [], [], []
 
@@ -68,7 +68,7 @@ images = images[:30]
 labels = labels[:30]
 preds = preds[:30]
 
-# ---- Create 10×3 prediction grid ----
+# Create 10×3 prediction grid 
 wandb_images =[]
 for i in range(30):
         # Denormalize image
@@ -88,7 +88,7 @@ for i in range(30):
             caption=caption,
         ))
 
-# ---- Log grid and accuracy to wandb ----
+# Log grid and accuracy to wandb 
 wandb.log({
     "Prediction Grid": wandb_images,
     "Best Test Accuracy": best_accuracy

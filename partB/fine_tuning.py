@@ -6,18 +6,15 @@ from torchvision import models
 from tqdm import tqdm
 import wandb
 
-# ----------------------------
+
 # Configuration
-# ----------------------------
 BATCH_SIZE = 32
 NUM_CLASSES = 10
 EPOCHS = 15
 LR = 0.001
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-# ----------------------------
+ 
 # Init wandb
-# ----------------------------
 wandb.init(project="resnet50-finetune-inaturalist", config={
     "batch_size": BATCH_SIZE,
     "epochs": EPOCHS,
@@ -26,16 +23,14 @@ wandb.init(project="resnet50-finetune-inaturalist", config={
     "unfrozen_layers": "layer4 + fc",
 })
 
-# ----------------------------
+
 # Load Dataset
-# ----------------------------
 train_loader, val_loader, test_loader = data_loader(
     data_dir='data', batch_size=BATCH_SIZE, dataAugmentation=True
 )
 
-# ----------------------------
+
 # Load Pretrained Model
-# ----------------------------
 model = models.resnet50(pretrained=True)
 
 # Freeze all layers
@@ -52,18 +47,16 @@ model.fc = nn.Linear(num_ftrs, NUM_CLASSES)
 
 model = model.to(DEVICE)
 
-# ----------------------------
+
 # Loss, Optimizer, Scheduler
-# ----------------------------
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(
     filter(lambda p: p.requires_grad, model.parameters()), lr=LR
 )
 scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=5, gamma=0.1)
 
-# ----------------------------
+
 # Training & Evaluation
-# ----------------------------
 def train(model, loader, criterion, optimizer):
     model.train()
     running_loss = 0
@@ -97,9 +90,8 @@ def validate(model, loader, desc="Validation"):
             total += labels.size(0)
     return correct / total
 
-# ----------------------------
+
 # Main Training Loop
-# ----------------------------
 for epoch in range(EPOCHS):
     print(f"\nEpoch {epoch+1}/{EPOCHS}")
     
@@ -121,9 +113,8 @@ for epoch in range(EPOCHS):
 
     scheduler.step()
 
-# ----------------------------
+
 # Save model
-# ----------------------------
 torch.save(model.state_dict(), "resnet50_inaturalist_finetuned.pth")
 wandb.save("resnet50_inaturalist_finetuned.pth")
 wandb.finish()

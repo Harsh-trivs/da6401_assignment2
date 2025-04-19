@@ -4,17 +4,17 @@ import wandb
 import gc
 
 def train():
-    wandb.init()
-    config = wandb.config
+    wandb.init() # Initialize Weights & Biases
+    config = wandb.config 
     train_loader, val_loader, test_loader = data_loader(data_dir='data', batch_size=32, dataAugmentation=config.data_aug)
     wandb.run.name = (
         f"n_filters_{config.num_filters}_act_{config.activation_function}_"
         f"fof_{config.filter_organisation_factor}_dropout_{config.dropout}_"
         f"bn_{config.batch_norm}_data_aug_{config.data_aug}_hs_{config.hidden_size}_"
         f"n_blocks_{config.n_blocks}_num_epochs_{config.epochs}"
-    )
+    ) # Set the run name based on hyperparameters
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu") # Use GPU if available
 
     model = CustomCNN(num_filters=config.num_filters,
                       hidden_size=config.hidden_size,
@@ -22,13 +22,13 @@ def train():
                       dropout=config.dropout,
                       batch_norm=config.batch_norm,
                       n_blocks=config.n_blocks,
-                      activation_function=config.activation_function).to(device)
+                      activation_function=config.activation_function).to(device) # Initialize the model with hyperparameters from wandb
     
     history = model.train_model(train_loader=train_loader,
                                 val_loader=val_loader,
                                 epochs=config.epochs,
                                 learning_rate=0.001,
-                                device=device)
+                                device=device) # Train the model with hyperparameters from wandb
 
     # Log metrics to wandb
     for epoch in range(len(history['train_loss'])):
@@ -38,7 +38,7 @@ def train():
             'train_acc': history['train_acc'][epoch],
             'val_acc': history['val_acc'][epoch],
             'epoch': epoch
-        })
+        }) # Log metrics for each epoch
     torch.cuda.empty_cache()
     gc.collect()
     del model
@@ -57,10 +57,9 @@ sweep_config = {
         "num_filters": {"values": [16, 32, 64]},
         "n_blocks": {"values": [5]}
     }
-}
+} # Define the sweep configuration
 
-
-project_name = "iNaturalist-CNN-Optimization"
+project_name = "iNaturalist-CNN-Optimization" # Define the project name
 
 # Create sweep
 sweep_id = wandb.sweep(

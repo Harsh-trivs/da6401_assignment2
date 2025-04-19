@@ -179,22 +179,22 @@ class CustomCNN(nn.Module):
 def transform_image(dataAugmentation=False):
     if dataAugmentation:
         transform = transforms.Compose([
-            transforms.Resize((224, 224)),
-            transforms.RandomRotation(15),
-            transforms.RandomHorizontalFlip(),
-            transforms.ToTensor(),
+            transforms.Resize((224, 224)), # Resize to 224x224
+            transforms.RandomRotation(15), # Random rotation
+            transforms.RandomHorizontalFlip(), # Random horizontal flip
+            transforms.ToTensor(), # Convert to tensor
             transforms.Normalize(
                 mean=[0.485, 0.456, 0.406],       
                 std=[0.229, 0.224, 0.225])
-        ])
+        ]) # Normalize with ImageNet stats
         return transform
     transform = transforms.Compose([
-        transforms.Resize((224, 224)),
-        transforms.ToTensor(),
+        transforms.Resize((224, 224)), # Resize to 224x224
+        transforms.ToTensor(),  # Convert to tensor
         transforms.Normalize(
             mean=[0.485, 0.456, 0.406],       
             std=[0.229, 0.224, 0.225]
-        )
+        ) # Normalize with ImageNet stats
     ])
     return transform
 
