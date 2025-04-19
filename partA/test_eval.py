@@ -87,7 +87,7 @@ if __name__ == "__main__":
             
             # Create caption with prediction info
             caption = (f"Correct ✅" if labels[i] == preds[i] else f"Wrong ❌") + \
-                    f"\nPredicted: {class_to_name[labels[i].item()]}\nActual: {class_to_name[preds[i].item()]}"
+                    f"\nPredicted:{class_to_name[preds[i].item()]} \nActual: {class_to_name[labels[i].item()]}"
             
             # Create wandb.Image with caption
             wandb_images.append(wandb.Image(
