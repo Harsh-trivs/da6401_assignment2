@@ -1,3 +1,19 @@
+# Folder structure
+```bash
+da6401_assignment2
+├── main.ipynb
+├── partA
+│   ├── best_model.pth
+│   ├── model.py
+│   ├── requirements.txt
+│   ├── test_eval.py
+│   └── wandbSweep.py
+└── partB
+    ├── fine_tuning.py
+    ├── requirements.txt
+    └── resnet50_inaturalist_finetuned.pth
+```
+
 # Part A :
 
 ## Setup Instruction :
